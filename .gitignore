@@ -1,0 +1,113 @@
+# Documentation - Ignore all MD files except README.md files
+*.md
+!README.md
+!**/README.md
+
+# Node modules
+node_modules/
+*/node_modules/
+
+# Expo
+.expo/
+.expo-shared/
+dist/
+npm-debug.*
+*.jks
+*.p8
+*.p12
+*.key
+*.mobileprovision
+*.orig.*
+web-build/
+
+# macOS
+.DS_Store
+
+# Environment variables
+.env
+.env.local
+.env.*.local
+application.yml
+application-*.yml
+
+# IDE
+.vscode/
+.idea/
+*.swp
+*.swo
+*~
+
+# Logs
+logs
+*.log
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+/tmp/
+
+# Testing
+coverage/
+
+# AWS
+.serverless/
+*.zip
+
+# Build
+build/
+*.app
+
+# Temporary files
+*.tmp
+tmp/
+
+# OS
+Thumbs.db
+
+# Lock files
+yarn.lock
+
+# Java/Maven
+target/
+*.class
+*.jar
+!**/src/main/**/target/
+!**/src/test/**/target/
+.mvn/
+mvn*.cmd
+
+# Xcode
+*.xcworkspace
+!*.xcworkspace/contents.xcworkspacedata
+!*.xcworkspace/xcshareddata/
+*.xcuserdata
+*.xcuserdatad/
+xcuserdata/
+DerivedData/
+*.moved-aside
+*.pbxuser
+!default.pbxuser
+*.mode1v3
+!default.mode1v3
+*.mode2v3
+!default.mode2v3
+*.perspectivev3
+!default.perspectivev3
+*.hmap
+*.ipa
+*.dSYM.zip
+*.dSYM
+
+# Swift Package Manager
+.swiftpm/
+.build/
+Packages/
+Package.pins
+Package.resolved
+
+# CocoaPods
+Pods/
+Podfile.lock
+
+# Test scripts
+test-*.sh
+*.sh
