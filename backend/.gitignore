@@ -1,0 +1,39 @@
+# Environment variables (NEVER commit credentials!)
+.env
+*.env
+
+# Maven
+target/
+!.mvn/wrapper/maven-wrapper.jar
+!**/src/main/**/target/
+!**/src/test/**/target/
+
+# IDE
+.idea/
+*.iws
+*.iml
+*.ipr
+.vscode/
+
+# macOS
+.DS_Store
+*.swp
+*.swo
+
+# Logs
+*.log
+logs/
+
+# Build
+*.class
+*.jar
+!maven-wrapper.jar
+
+# Test
+*.class
+
+# Temporary files
+*.tmp
+*.bak
+*.swp
+*~

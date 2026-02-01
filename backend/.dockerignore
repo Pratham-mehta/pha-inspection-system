@@ -1,0 +1,32 @@
+# Maven
+target/
+.mvn/
+mvnw
+mvnw.cmd
+
+# IDE
+.idea/
+.vscode/
+*.iml
+*.ipr
+*.iws
+
+# OS
+.DS_Store
+Thumbs.db
+
+# Logs
+*.log
+logs/
+
+# Test
+*.class
+
+# Environment
+.env
+*.env
+
+# Documentation
+README.md
+TESTING_GUIDE.md
+DYNAMODB_MIGRATION_STATUS.md

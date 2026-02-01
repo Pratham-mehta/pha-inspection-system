@@ -1,70 +1,46 @@
 package com.pha.inspection.repository;
 
 import com.pha.inspection.model.entity.Inspector;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Repository;
+import software.amazon.awssdk.enhanced.dynamodb.DynamoDbEnhancedClient;
+import software.amazon.awssdk.enhanced.dynamodb.DynamoDbTable;
+import software.amazon.awssdk.enhanced.dynamodb.Key;
+import software.amazon.awssdk.enhanced.dynamodb.TableSchema;
 
-import java.util.Map;
 import java.util.Optional;
-import java.util.concurrent.ConcurrentHashMap;
 
 /**
  * Repository for Inspector operations
  *
- * ⚠️ PHASE 9 IMPLEMENTATION: IN-MEMORY STORAGE ⚠️
+ * ✅ DYNAMODB IMPLEMENTATION (Migrated from Phase 9 in-memory storage)
  *
- * This repository uses ConcurrentHashMap for in-memory storage during Phase 9 (Frontend Development).
- * This allows frontend-backend integration testing without requiring DynamoDB setup.
- *
- * 🔄 MIGRATION TO DYNAMODB (PHASE 10 - DEPLOYMENT):
- * To switch to DynamoDB for production:
- *
- * 1. UNCOMMENT the DynamoDB imports below:
- *    - import org.springframework.beans.factory.annotation.Autowired;
- *    - import org.springframework.beans.factory.annotation.Value;
- *    - import software.amazon.awssdk.enhanced.dynamodb.DynamoDbEnhancedClient;
- *    - import software.amazon.awssdk.enhanced.dynamodb.DynamoDbTable;
- *    - import software.amazon.awssdk.enhanced.dynamodb.Key;
- *    - import software.amazon.awssdk.enhanced.dynamodb.TableSchema;
- *
- * 2. REPLACE the in-memory storage field with:
- *    private final DynamoDbTable<Inspector> inspectorTable;
- *
- * 3. REPLACE the constructor with:
- *    @Autowired
- *    public InspectorRepository(DynamoDbEnhancedClient enhancedClient,
- *                               @Value("${aws.dynamodb.table-name}") String tableName) {
- *        this.inspectorTable = enhancedClient.table(tableName, TableSchema.fromBean(Inspector.class));
- *    }
- *
- * 4. REPLACE each method implementation:
- *    - findByInspectorId(): Use inspectorTable.getItem() with Key.builder()
- *    - save(): Use inspectorTable.putItem() with inspector.initializeGSI()
- *    - delete(): Use inspectorTable.deleteItem() with Key.builder()
- *
- * 5. See DYNAMODB_MIGRATION_GUIDE.md for complete implementation
- *
- * NOTE: The original DynamoDB implementation is preserved in git history
- * Commit: [Will be added when committed]
+ * This repository uses AWS DynamoDB Enhanced Client for persistent storage.
+ * All inspector data is stored in the "pha-inspections" table with:
+ * - Partition Key (PK): "INSPECTOR#{inspectorId}"
+ * - Sort Key (SK): "METADATA"
+ * - GSI1: For querying all inspectors by status/role (future enhancement)
  */
 @Repository
 public class InspectorRepository {
 
-    // ========================================
-    // IN-MEMORY STORAGE (PHASE 9)
-    // ========================================
-    // REMOVE THIS SECTION FOR DYNAMODB (PHASE 10)
-    private final Map<String, Inspector> inspectorStore = new ConcurrentHashMap<>();
+    private final DynamoDbTable<Inspector> inspectorTable;
+
+    @Autowired
+    public InspectorRepository(DynamoDbEnhancedClient enhancedClient,
+                               @Value("${aws.dynamodb.table-name}") String tableName) {
+        this.inspectorTable = enhancedClient.table(tableName, TableSchema.fromBean(Inspector.class));
+    }
 
     /**
      * Find inspector by ID
      *
-     * IN-MEMORY IMPLEMENTATION (Phase 9)
-     * For DynamoDB: Use inspectorTable.getItem() with partition key "INSPECTOR#" + inspectorId
+     * Uses DynamoDB getItem() with composite key:
+     * - PK: "INSPECTOR#{inspectorId}"
+     * - SK: "METADATA"
      */
     public Optional<Inspector> findByInspectorId(String inspectorId) {
-        return Optional.ofNullable(inspectorStore.get(inspectorId));
-
-        /* DYNAMODB IMPLEMENTATION (PHASE 10 - UNCOMMENT THIS):
         try {
             Key key = Key.builder()
                     .partitionValue("INSPECTOR#" + inspectorId)
@@ -76,20 +52,19 @@ public class InspectorRepository {
         } catch (Exception e) {
             throw new RuntimeException("Error finding inspector: " + inspectorId, e);
         }
-        */
     }
 
     /**
      * Save inspector
      *
-     * IN-MEMORY IMPLEMENTATION (Phase 9)
-     * For DynamoDB: Use inspectorTable.putItem() after calling inspector.initializeGSI()
+     * Initializes DynamoDB keys (PK, SK, GSI1PK, GSI1SK) and persists to DynamoDB.
+     * The initializeGSI() method sets:
+     * - PK = "INSPECTOR#{inspectorId}"
+     * - SK = "METADATA"
+     * - GSI1PK = "INSPECTORS"
+     * - GSI1SK = "INSPECTOR#{inspectorId}"
      */
     public Inspector save(Inspector inspector) {
-        inspectorStore.put(inspector.getInspectorId(), inspector);
-        return inspector;
-
-        /* DYNAMODB IMPLEMENTATION (PHASE 10 - UNCOMMENT THIS):
         try {
             // Initialize GSI attributes before saving
             inspector.initializeGSI();
@@ -98,19 +73,14 @@ public class InspectorRepository {
         } catch (Exception e) {
             throw new RuntimeException("Error saving inspector", e);
         }
-        */
     }
 
     /**
      * Delete inspector
      *
-     * IN-MEMORY IMPLEMENTATION (Phase 9)
-     * For DynamoDB: Use inspectorTable.deleteItem() with partition key
+     * Deletes inspector from DynamoDB using composite key.
      */
     public void delete(String inspectorId) {
-        inspectorStore.remove(inspectorId);
-
-        /* DYNAMODB IMPLEMENTATION (PHASE 10 - UNCOMMENT THIS):
         try {
             Key key = Key.builder()
                     .partitionValue("INSPECTOR#" + inspectorId)
@@ -121,27 +91,5 @@ public class InspectorRepository {
         } catch (Exception e) {
             throw new RuntimeException("Error deleting inspector: " + inspectorId, e);
         }
-        */
-    }
-
-    // ========================================
-    // ADDITIONAL METHODS FOR IN-MEMORY TESTING
-    // ========================================
-    // REMOVE THESE FOR PRODUCTION (PHASE 10)
-
-    /**
-     * Get all inspectors (for testing only)
-     * NOT NEEDED FOR DYNAMODB
-     */
-    public Map<String, Inspector> getAllInspectors() {
-        return inspectorStore;
-    }
-
-    /**
-     * Clear all inspectors (for testing only)
-     * NOT NEEDED FOR DYNAMODB
-     */
-    public void clearAll() {
-        inspectorStore.clear();
     }
 }

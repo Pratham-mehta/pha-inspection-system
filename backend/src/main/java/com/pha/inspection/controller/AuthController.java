@@ -1,5 +1,6 @@
 package com.pha.inspection.controller;
 
+import com.pha.inspection.model.dto.CreateInspectorRequest;
 import com.pha.inspection.model.dto.LoginRequest;
 import com.pha.inspection.model.dto.LoginResponse;
 import com.pha.inspection.service.AuthService;
@@ -51,22 +52,37 @@ public class AuthController {
     }
 
     /**
-     * Test endpoint to create an inspector (for development/testing only)
-     * This should be removed or secured in production
+     * Create inspector endpoint (supports both JSON body and query parameters)
+     * Used by iPad app signup and Swagger UI testing
      */
     @PostMapping("/create-inspector")
-    @Operation(summary = "Create test inspector", description = "Create a test inspector account (development only)")
+    @Operation(summary = "Create inspector account", description = "Create a new inspector account with JSON body or query parameters")
     public ResponseEntity<?> createInspector(
-            @RequestParam String inspectorId,
-            @RequestParam String name,
-            @RequestParam String password,
-            @RequestParam String vehicleTagId) {
+            @Valid @RequestBody(required = false) CreateInspectorRequest requestBody,
+            @RequestParam(required = false) String inspectorId,
+            @RequestParam(required = false) String name,
+            @RequestParam(required = false) String password,
+            @RequestParam(required = false) String vehicleTagId) {
         try {
-            authService.createInspector(inspectorId, name, password, vehicleTagId);
+            // Support both JSON body (from iPad app) and query parameters (from Swagger UI)
+            String finalInspectorId = requestBody != null ? requestBody.getInspectorId() : inspectorId;
+            String finalName = requestBody != null ? requestBody.getName() : name;
+            String finalPassword = requestBody != null ? requestBody.getPassword() : password;
+            String finalVehicleTagId = requestBody != null ? requestBody.getVehicleTagId() : vehicleTagId;
+
+            // Validate required fields
+            if (finalInspectorId == null || finalName == null || finalPassword == null || finalVehicleTagId == null) {
+                Map<String, String> error = new HashMap<>();
+                error.put("error", "Missing required fields");
+                error.put("message", "inspectorId, name, password, and vehicleTagId are required");
+                return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(error);
+            }
+
+            authService.createInspector(finalInspectorId, finalName, finalPassword, finalVehicleTagId);
 
             Map<String, String> response = new HashMap<>();
             response.put("message", "Inspector created successfully");
-            response.put("inspectorId", inspectorId);
+            response.put("inspectorId", finalInspectorId);
 
             return ResponseEntity.ok(response);
         } catch (Exception e) {
