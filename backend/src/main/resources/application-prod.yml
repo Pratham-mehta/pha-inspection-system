@@ -1,0 +1,22 @@
+server:
+  port: ${PORT:8080}
+  servlet:
+    context-path: /api
+
+logging:
+  level:
+    root: INFO
+    com.pha.inspection: INFO
+    software.amazon.awssdk: WARN
+
+aws:
+  dynamodb:
+    table-name: pha-inspections
+    region: ${AWS_REGION:us-east-1}
+    endpoint: ""  # Empty for production (use real AWS DynamoDB)
+  access-key-id: ${AWS_ACCESS_KEY_ID:}
+  secret-access-key: ${AWS_SECRET_ACCESS_KEY:}
+
+jwt:
+  secret: ${JWT_SECRET}
+  expiration: ${JWT_EXPIRATION:86400000}
