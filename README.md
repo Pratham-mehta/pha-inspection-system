@@ -2,11 +2,11 @@
 
 A comprehensive iPad application for Philadelphia Housing Authority (PHA) property inspections, built with React Native and AWS serverless architecture.
 
-## 🎯 Overview
+##  Overview
 
 This application enables PHA inspectors to conduct property inspections efficiently on iPad devices, with offline capabilities, real-time sync, image capture, digital signatures, and AI-powered assistance through AWS Bedrock.
 
-## ✨ Features
+##  Features
 
 - **Dashboard with Filtering**: Filter inspections by area, year, month, status
 - **Inspection Management**: Create, update, and submit inspections
@@ -18,7 +18,7 @@ This application enables PHA inspectors to conduct property inspections efficien
 - **Offline Mode**: Work without internet and sync later
 - **Real-time Sync**: Automatic synchronization when online
 
-## 🏗️ Architecture
+## Architecture
 
 ### Frontend
 - **Framework**: React Native CLI (migrated from Expo)
@@ -35,7 +35,7 @@ This application enables PHA inspectors to conduct property inspections efficien
 - **Authentication**: AWS Cognito
 - **AI Assistant**: AWS Bedrock (Claude 3.5 Sonnet)
 
-## 📁 Project Structure
+##  Project Structure
 
 ```
 PHA-Inspection-App/
@@ -47,7 +47,7 @@ PHA-Inspection-App/
 └── README.md           # This file
 ```
 
-## 🚀 Quick Start
+##  Quick Start
 
 ### Prerequisites
 - Node.js 20.x or higher
@@ -79,13 +79,13 @@ npm run deploy:dev
 
 For detailed setup instructions, see [docs/SETUP.md](docs/SETUP.md).
 
-## 📚 Documentation
+##  Documentation
 
 - [CLAUDE.md](CLAUDE.md) - Complete development plan and architecture
 - [docs/SETUP.md](docs/SETUP.md) - Detailed setup instructions
 - [docs/API.md](docs/API.md) - API documentation (coming soon)
 
-## 🔧 Technology Stack
+##  Technology Stack
 
 ### Mobile App
 - React Native 0.74.5
@@ -105,7 +105,7 @@ For detailed setup instructions, see [docs/SETUP.md](docs/SETUP.md).
 - AWS Bedrock (Claude 3.5 Sonnet)
 - Serverless Framework
 
-## 🎨 Key Screens
+##  Key Screens
 
 1. **Login** - AWS Cognito authentication
 2. **Dashboard** - Overview with filters
@@ -116,7 +116,7 @@ For detailed setup instructions, see [docs/SETUP.md](docs/SETUP.md).
 7. **Tenant Acknowledgement** - Digital signature
 8. **Chatbot** - AI assistant for guidance
 
-## 📱 Development Status
+##  Development Status
 
 ### Phase 1: Foundation Setup ✅
 - [x] Project structure created
@@ -135,7 +135,7 @@ For detailed setup instructions, see [docs/SETUP.md](docs/SETUP.md).
 ### Upcoming Phases
 See [CLAUDE.md](CLAUDE.md) for complete roadmap.
 
-## 🔐 Security
+##  Security
 
 - JWT-based authentication with AWS Cognito
 - Encrypted data at rest (DynamoDB encryption)
@@ -143,7 +143,7 @@ See [CLAUDE.md](CLAUDE.md) for complete roadmap.
 - Pre-signed URLs for S3 uploads
 - IAM least-privilege policies
 
-## 💰 Cost Estimation
+##  Cost Estimation
 
 Monthly AWS costs (estimated):
 - DynamoDB: $50-100
@@ -155,14 +155,14 @@ Monthly AWS costs (estimated):
 
 **Total: ~$158-370/month**
 
-## 🤝 Contributing
+##  Contributing
 
 This is an internal project. For questions or issues:
 1. Check the documentation
 2. Review CloudWatch logs
 3. Contact the development team
 
-## 📄 License
+##  License
 
 Proprietary - Philadelphia Housing Authority
 
