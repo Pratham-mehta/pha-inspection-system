@@ -23,6 +23,9 @@ import java.util.stream.Collectors;
  * - GSI1: For querying inspections by unit
  * - GSI2: For querying inspections by status and date
  * - GSI3: For querying inspections by inspector
+ *
+ * Note: All scan operations filter by SK="METADATA" to only return Inspection entities,
+ * not related items like images, responses, or signatures that share the same PK prefix.
  */
 @Component
 public class InspectionRepositoryImpl implements InspectionRepository {
