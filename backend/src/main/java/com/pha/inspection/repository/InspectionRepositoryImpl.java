@@ -66,8 +66,10 @@ public class InspectionRepositoryImpl implements InspectionRepository {
     public List<Inspection> findAll() {
         try {
             // Use scan to get all inspections
-            // For large datasets, consider pagination or filtering
-            return inspectionTable.scan().items().stream().collect(Collectors.toList());
+            // Filter by SK = "METADATA" to only get Inspection entities (not images, responses, signatures)
+            return inspectionTable.scan().items().stream()
+                    .filter(i -> "METADATA".equals(i.getSK()))
+                    .collect(Collectors.toList());
         } catch (Exception e) {
             throw new RuntimeException("Error finding all inspections", e);
         }
@@ -97,8 +99,10 @@ public class InspectionRepositoryImpl implements InspectionRepository {
     public List<Inspection> findBySiteCode(String siteCode) {
         try {
             // Scan with filter - no GSI for site code
+            // Filter by SK = "METADATA" to only get Inspection entities
             // For better performance, consider adding GSI4 for site code in production
             return inspectionTable.scan().items().stream()
+                    .filter(i -> "METADATA".equals(i.getSK()))
                     .filter(i -> siteCode.equals(i.getSiteCode()))
                     .collect(Collectors.toList());
         } catch (Exception e) {
@@ -143,8 +147,11 @@ public class InspectionRepositoryImpl implements InspectionRepository {
     public long count() {
         try {
             // Use scan to count all inspections
+            // Filter by SK = "METADATA" to only count Inspection entities
             // For large datasets, use DynamoDB's describe-table API for approximate count
-            return inspectionTable.scan().items().stream().count();
+            return inspectionTable.scan().items().stream()
+                    .filter(i -> "METADATA".equals(i.getSK()))
+                    .count();
         } catch (Exception e) {
             throw new RuntimeException("Error counting inspections", e);
         }
