@@ -21,7 +21,7 @@ struct DashboardView: View {
     @State private var showOnboarding = false
 
     let areas = ["All", "SS", "CS", "AMPB", "PAPMC"]
-    let years = Array(2004...2025).reversed()
+    let years = Array(2004...2026).reversed()
     let months = [
         (1, "January"), (2, "February"), (3, "March"), (4, "April"),
         (5, "May"), (6, "June"), (7, "July"), (8, "August"),
