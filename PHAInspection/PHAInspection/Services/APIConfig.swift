@@ -9,20 +9,8 @@ import Foundation
 
 struct APIConfig {
     // MARK: - Base URL
-    #if DEBUG
-    static let baseURL: String = {
-        #if targetEnvironment(simulator)
-        // Running on Simulator - use localhost
-        return "http://localhost:8080/api"
-        #else
-        // Running on Physical Device - use Render deployment
-        return "https://pha-inspection-backend.onrender.com/api"
-        #endif
-    }()
-    #else
-    // Production - Render deployment
-    static let baseURL = "https://pha-inspection-backend.onrender.com/api"
-    #endif
+    // Railway deployment URL
+    static let baseURL = "https://pha-inspection-system-production.up.railway.app/api"
 
     // MARK: - Endpoints
     struct Endpoints {

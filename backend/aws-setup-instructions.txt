@@ -1,0 +1,144 @@
+========================================
+AWS DYNAMODB SETUP INSTRUCTIONS
+========================================
+
+STEP 1: CREATE IAM USER (Development)
+--------------------------------------
+1. Go to AWS Console: https://console.aws.amazon.com/iam/
+2. Click "Users" → "Create user"
+3. User name: pha-inspection-dev
+4. Click "Next"
+5. Select "Attach policies directly"
+6. Search for and select: AmazonDynamoDBFullAccess
+   (Or create custom policy with restricted permissions - see below)
+7. Click "Next" → "Create user"
+
+STEP 2: GENERATE ACCESS KEYS
+-----------------------------
+1. Click on the newly created user: pha-inspection-dev
+2. Go to "Security credentials" tab
+3. Scroll to "Access keys" section
+4. Click "Create access key"
+5. Select use case: "Application running outside AWS"
+6. Click "Next" → Add optional description → "Create access key"
+7. **IMPORTANT**: Copy both:
+   - Access key ID (starts with AKIA...)
+   - Secret access key (only shown once!)
+8. Click "Done"
+
+STEP 3: UPDATE .ENV FILE
+-------------------------
+Open: /Users/prathammehta/Desktop/Pratham/IpadOSapp/backend/.env
+
+Replace these values:
+- AWS_ACCESS_KEY_ID=YOUR_ACCESS_KEY_HERE
+- AWS_SECRET_ACCESS_KEY=YOUR_SECRET_KEY_HERE
+
+Example:
+AWS_ACCESS_KEY_ID=AKIAIOSFODNN7EXAMPLE
+AWS_SECRET_ACCESS_KEY=wJalrXUtnFEMI/K7MDENG/bPxRfiCYEXAMPLEKEY
+
+STEP 4: CREATE DYNAMODB TABLE
+------------------------------
+Option A: Using AWS Console
+1. Go to: https://console.aws.amazon.com/dynamodb/
+2. Click "Create table"
+3. Table name: pha-inspections
+4. Partition key: PK (String)
+5. Sort key: SK (String)
+6. Table settings: Choose "On-demand" (recommended for development)
+7. Click "Create table"
+8. Wait for table to become ACTIVE (usually 1-2 minutes)
+
+9. Create Global Secondary Indexes:
+   - Click on the table → "Indexes" tab → "Create index"
+
+   Index 1 (GSI1):
+   - Partition key: GSI1PK (String)
+   - Sort key: GSI1SK (String)
+   - Index name: GSI1
+   - Click "Create index"
+
+   Index 2 (GSI2):
+   - Partition key: GSI2PK (String)
+   - Sort key: GSI2SK (String)
+   - Index name: GSI2
+   - Click "Create index"
+
+   Index 3 (GSI3):
+   - Partition key: GSI3PK (String)
+   - Sort key: GSI3SK (String)
+   - Index name: GSI3
+   - Click "Create index"
+
+Option B: Using AWS CLI (Automated)
+See: create-dynamodb-table.sh script
+
+STEP 5: VERIFY SETUP
+--------------------
+Run this command to verify table created:
+aws dynamodb describe-table --table-name pha-inspections --region us-east-1
+
+STEP 6: TEST CONNECTION
+------------------------
+1. Start backend with .env loaded:
+   cd /Users/prathammehta/Desktop/Pratham/IpadOSapp/backend
+   export $(cat .env | xargs)
+   mvn spring-boot:run
+
+2. Check logs for DynamoDB connection success
+
+========================================
+CUSTOM IAM POLICY (Least Privilege)
+========================================
+
+If you want stricter permissions instead of AmazonDynamoDBFullAccess:
+
+{
+  "Version": "2012-10-17",
+  "Statement": [
+    {
+      "Effect": "Allow",
+      "Action": [
+        "dynamodb:GetItem",
+        "dynamodb:PutItem",
+        "dynamodb:UpdateItem",
+        "dynamodb:DeleteItem",
+        "dynamodb:Query",
+        "dynamodb:Scan",
+        "dynamodb:BatchGetItem",
+        "dynamodb:BatchWriteItem"
+      ],
+      "Resource": [
+        "arn:aws:dynamodb:us-east-1:*:table/pha-inspections",
+        "arn:aws:dynamodb:us-east-1:*:table/pha-inspections/index/*"
+      ]
+    },
+    {
+      "Effect": "Allow",
+      "Action": [
+        "dynamodb:DescribeTable",
+        "dynamodb:ListTables"
+      ],
+      "Resource": "*"
+    }
+  ]
+}
+
+========================================
+TROUBLESHOOTING
+========================================
+
+Issue: "The security token included in the request is invalid"
+Fix: Check AWS_ACCESS_KEY_ID and AWS_SECRET_ACCESS_KEY are correct
+
+Issue: "User is not authorized to perform: dynamodb:PutItem"
+Fix: Attach AmazonDynamoDBFullAccess policy to IAM user
+
+Issue: "Cannot do operations on a non-existent table"
+Fix: Ensure table "pha-inspections" is created and ACTIVE
+
+Issue: Application can't load .env file
+Fix: Use: export $(cat .env | xargs) before mvn spring-boot:run
+
+========================================

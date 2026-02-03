@@ -32,7 +32,20 @@ class InspectionService {
             endpoint += "&siteCode=\(siteCode)"
         }
 
-        return try await APIService.shared.request(endpoint: endpoint)
+        let response: InspectionListResponse = try await APIService.shared.request(endpoint: endpoint)
+
+        // Filter out invalid inspections with null/unknown values
+        // This handles DynamoDB single-table design where non-inspection items may be returned
+        let validInspections = response.content.filter { inspection in
+            inspection.soNumber != "UNKNOWN" && inspection.unitNumber != "N/A"
+        }
+
+        return InspectionListResponse(
+            content: validInspections,
+            totalElements: validInspections.count,
+            totalPages: max(1, Int(ceil(Double(validInspections.count) / Double(size)))),
+            currentPage: page
+        )
     }
 
     // MARK: - Get Single Inspection
