@@ -28,7 +28,7 @@ class ChatbotService {
     private init() {}
 
     func query(question: String) async throws -> String {
-        guard let token = AuthManager.shared.token else {
+        guard let token = AuthManager.shared.getToken() else {
             throw NetworkError.unauthorized
         }
 
@@ -49,7 +49,7 @@ class ChatbotService {
         let (data, response) = try await URLSession.shared.data(for: request)
 
         guard let httpResponse = response as? HTTPURLResponse, httpResponse.statusCode == 200 else {
-            throw NetworkError.serverError("Failed to get chatbot response")
+            throw NetworkError.serverError(500, "Failed to get chatbot response")
         }
 
         let result = try JSONDecoder().decode(ChatbotQueryResponse.self, from: data)
