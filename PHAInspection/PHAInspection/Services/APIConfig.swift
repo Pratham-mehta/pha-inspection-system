@@ -9,8 +9,10 @@ import Foundation
 
 struct APIConfig {
     // MARK: - Base URL
-    // Railway deployment URL
-    static let baseURL = "https://pha-inspection-system-production.up.railway.app/api"
+    // Local development - use localhost for simulator, or Mac's LAN IP for physical iPad
+    // For simulator: http://localhost:8080/api
+    // For physical iPad: http://YOUR_MAC_IP:8080/api (e.g. http://192.168.1.100:8080/api)
+    static let baseURL = "http://localhost:8080/api"
 
     // MARK: - Endpoints
     struct Endpoints {

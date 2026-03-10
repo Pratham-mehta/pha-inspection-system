@@ -20,6 +20,7 @@ struct InspectionDetailView: View {
     @State private var showingSubmitAlert = false
     @State private var isSubmitting = false
     @State private var navigateToChecklist = false
+    @State private var navigateToPMI = false
     @State private var showHelpSheet = false
     @State private var showTenantAcknowledgement = false
 
@@ -394,11 +395,14 @@ struct InspectionDetailView: View {
         VStack(spacing: 16) {
             if inspection.status != .closed {
                 // Start Inspection Button
-                NavigationLink(destination: InspectionChecklistView(inspection: inspection)) {
+                NavigationLink(destination: InspectionChecklistView(inspection: inspection), isActive: $navigateToChecklist) {
+                    EmptyView()
+                }
+                Button(action: { startChecklist(inspection: inspection) }) {
                     HStack {
                         Image(systemName: "list.clipboard.fill")
                             .font(.system(size: 18))
-                        Text("Start Inspection Checklist")
+                        Text(inspection.status == .new ? "Start Inspection Checklist" : "Continue Inspection Checklist")
                             .font(.system(size: 18, weight: .semibold))
                     }
                     .foregroundColor(.white)
@@ -419,11 +423,14 @@ struct InspectionDetailView: View {
                 }
 
                 // PMI Checklist Button
-                NavigationLink(destination: PMIChecklistView(inspection: inspection)) {
+                NavigationLink(destination: PMIChecklistView(inspection: inspection), isActive: $navigateToPMI) {
+                    EmptyView()
+                }
+                Button(action: { startPMI(inspection: inspection) }) {
                     HStack {
                         Image(systemName: "wrench.and.screwdriver.fill")
                             .font(.system(size: 18))
-                        Text("Start PMI Checklist")
+                        Text(inspection.status == .new ? "Start PMI Checklist" : "Continue PMI Checklist")
                             .font(.system(size: 18, weight: .semibold))
                     }
                     .foregroundColor(.white)
@@ -582,6 +589,46 @@ struct InspectionDetailView: View {
                     self.errorMessage = error.localizedDescription
                     self.isLoading = false
                 }
+            }
+        }
+    }
+
+    private func startChecklist(inspection: Inspection) {
+        if inspection.status == .new {
+            markInProgress { navigateToChecklist = true }
+        } else {
+            navigateToChecklist = true
+        }
+    }
+
+    private func startPMI(inspection: Inspection) {
+        if inspection.status == .new {
+            markInProgress { navigateToPMI = true }
+        } else {
+            navigateToPMI = true
+        }
+    }
+
+    private func markInProgress(completion: @escaping () -> Void) {
+        Task {
+            do {
+                let request = UpdateInspectionRequest(
+                    status: "InProgress",
+                    startDate: nil,
+                    startTime: nil,
+                    endDate: nil,
+                    endTime: nil,
+                    smokeDetectorsCount: nil,
+                    coDetectorsCount: nil
+                )
+                try await InspectionService.shared.updateInspection(soNumber: soNumber, request: request)
+                await MainActor.run {
+                    loadInspection()
+                    completion()
+                }
+            } catch {
+                // Navigate anyway even if status update fails
+                await MainActor.run { completion() }
             }
         }
     }
