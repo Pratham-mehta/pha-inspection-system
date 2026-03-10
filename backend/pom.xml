@@ -20,7 +20,7 @@
 
     <properties>
         <java.version>17</java.version>
-        <aws.sdk.version>2.20.0</aws.sdk.version>
+        <aws.sdk.version>2.25.0</aws.sdk.version>
     </properties>
 
     <dependencies>
@@ -70,6 +70,13 @@
         <dependency>
             <groupId>software.amazon.awssdk</groupId>
             <artifactId>dynamodb-enhanced</artifactId>
+            <version>${aws.sdk.version}</version>
+        </dependency>
+
+        <!-- AWS SDK for Bedrock (company account - RAG chatbot) -->
+        <dependency>
+            <groupId>software.amazon.awssdk</groupId>
+            <artifactId>bedrockagentruntime</artifactId>
             <version>${aws.sdk.version}</version>
         </dependency>
 

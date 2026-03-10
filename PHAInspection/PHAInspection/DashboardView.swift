@@ -19,6 +19,7 @@ struct DashboardView: View {
     @State private var dashboardData: DashboardSummary?
     @State private var showHelpSheet = false
     @State private var showOnboarding = false
+    @State private var showChatbot = false
 
     let areas = ["All", "SS", "CS", "AMPB", "PAPMC"]
     let years = Array(2004...2026).reversed()
@@ -49,14 +50,19 @@ struct DashboardView: View {
         .background(Color(UIColor.systemGroupedBackground))
         .sheet(isPresented: $showHelpSheet) {
             HelpSheet(screenName: "Dashboard") {
-                // Restart tour callback
                 showOnboarding = true
             }
+        }
+        .sheet(isPresented: $showChatbot) {
+            ChatbotSheet(isPresented: $showChatbot)
         }
         .overlay {
             if showOnboarding {
                 OnboardingOverlay(isPresented: $showOnboarding, steps: HelpContent.dashboardSteps)
             }
+        }
+        .overlay {
+            ChatbotFAB(isPresented: $showChatbot)
         }
         .onAppear {
             loadDashboard()

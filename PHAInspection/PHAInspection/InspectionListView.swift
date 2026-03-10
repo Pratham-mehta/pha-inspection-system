@@ -24,6 +24,7 @@ struct InspectionListView: View {
     @State private var showHelpSheet = false
     @State private var showOnboarding = false
     @State private var showCreateInspection = false
+    @State private var showChatbot = false
 
     let statuses = ["All", "New", "InProgress", "Closed"]
     let areas = ["All", "SS", "CS", "AMPB", "PAPMC"]
@@ -62,10 +63,16 @@ struct InspectionListView: View {
         .sheet(isPresented: $showCreateInspection) {
             CreateInspectionView()
         }
+        .sheet(isPresented: $showChatbot) {
+            ChatbotSheet(isPresented: $showChatbot)
+        }
         .overlay {
             if showOnboarding {
                 OnboardingOverlay(isPresented: $showOnboarding, steps: HelpContent.inspectionListSteps)
             }
+        }
+        .overlay {
+            ChatbotFAB(isPresented: $showChatbot)
         }
         .onAppear {
             loadInspections()

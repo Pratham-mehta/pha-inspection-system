@@ -20,6 +20,9 @@ struct APIConfig {
         static let login = "/auth/login"
         static let createInspector = "/auth/create-inspector"
 
+        // Chatbot
+        static let chatbotQuery = "/chatbot/query"
+
         // Dashboard
         static let dashboardSummary = "/dashboard/summary"
 
