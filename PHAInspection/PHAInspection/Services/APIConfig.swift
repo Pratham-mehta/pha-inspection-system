@@ -9,10 +9,14 @@ import Foundation
 
 struct APIConfig {
     // MARK: - Base URL
-    // Local development - use localhost for simulator, or Mac's LAN IP for physical iPad
-    // For simulator: http://localhost:8080/api
-    // For physical iPad: http://YOUR_MAC_IP:8080/api (e.g. http://192.168.1.100:8080/api)
-    static let baseURL = "http://localhost:8080/api"
+    // Automatically uses localhost for simulator, Mac's LAN IP for physical iPad
+    static let baseURL: String = {
+        #if targetEnvironment(simulator)
+        return "http://localhost:8080/api"
+        #else
+        return "http://10.169.195.96:8080/api"
+        #endif
+    }()
 
     // MARK: - Endpoints
     struct Endpoints {
